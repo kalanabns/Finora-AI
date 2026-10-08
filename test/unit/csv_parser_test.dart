@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:alibaba/features/transactions/data/csv_parser.dart';
+import 'package:alibaba/features/transactions/data/demo_csv_data.dart';
 import 'package:alibaba/features/transactions/domain/transaction.dart';
 
 void main() {
@@ -239,6 +240,61 @@ void main() {
       expect(result.duplicateCount, 1);
       expect(result.validRows[0].isDuplicate, true);
       expect(result.validRows[1].isDuplicate, false);
+    });
+  });
+
+  group('DemoCsvData — Hackathon Sample Integrity & Pipeline Compatibility', () {
+    test('parses DemoCsvData accurately and auto-detects all column mappings', () {
+      final parsed = CsvParser.parseCsvString(DemoCsvData.sampleCsv);
+      expect(parsed.length, 21); // 1 header row + 20 data rows
+
+      final headers = parsed.first;
+      expect(headers, ['Date', 'Description', 'Category', 'Amount', 'Type', 'PaymentStatus']);
+
+      final mapping = CsvParser.autoDetectMapping(headers);
+      expect(mapping.dateColumn, 'Date');
+      expect(mapping.amountColumn, 'Amount');
+      expect(mapping.typeColumn, 'Type');
+      expect(mapping.descriptionColumn, 'Description');
+      expect(mapping.categoryColumn, 'Category');
+      expect(mapping.paymentStatusColumn, 'PaymentStatus');
+      expect(mapping.amountStrategy, CsvAmountStrategy.singleAmountWithTypeColumn);
+
+      final rows = parsed.skip(1).toList();
+      expect(rows.length, 20); // within 15-25 requirement
+
+      final result = CsvParser.processRows(
+        headers: headers,
+        rawRows: rows,
+        mapping: mapping,
+        businessId: 'biz-demo-100',
+      );
+
+      expect(result.totalCount, 20);
+      expect(result.validCount, 20);
+      expect(result.invalidCount, 0);
+
+      // Verify income and expenses both exist
+      expect(result.totalIncome, greaterThan(0));
+      expect(result.totalExpenses, greaterThan(0));
+
+      final incomeRows = result.validRows
+          .where((r) => r.transaction!.transactionType == TransactionType.income)
+          .toList();
+      final expenseRows = result.validRows
+          .where((r) => r.transaction!.transactionType == TransactionType.expense)
+          .toList();
+
+      expect(incomeRows.isNotEmpty, true);
+      expect(expenseRows.isNotEmpty, true);
+
+      // Verify multiple categories exist
+      final categories = result.validRows.map((r) => r.transaction!.category).toSet();
+      expect(categories.length, greaterThanOrEqualTo(8));
+
+      // Verify data spans multiple dates
+      final dates = result.validRows.map((r) => r.transaction!.transactionDate).toSet();
+      expect(dates.length, greaterThanOrEqualTo(10));
     });
   });
 }

@@ -9,7 +9,7 @@ void main() {
       final dataset = DemoBusinessService.getDemoData();
 
       expect(dataset.business.name, equals('Pacific Coast Roasters'));
-      expect(dataset.business.currency, equals('USD'));
+      expect(dataset.business.currency, equals('LKR'));
       expect(dataset.buckets.length, equals(6));
 
       // Check scenario numbers:

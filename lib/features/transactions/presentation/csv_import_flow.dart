@@ -1,10 +1,10 @@
-import 'dart:convert';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/utilities/money_formatter.dart';
 import '../../../shared/widgets/finora_primary_button.dart';
+import '../data/csv_file_reader.dart';
 import '../data/csv_parser.dart';
+import '../data/demo_csv_data.dart';
 import '../domain/transaction.dart';
 
 class CsvImportFlow extends StatefulWidget {
@@ -54,10 +54,7 @@ class _CsvImportFlowState extends State<CsvImportFlow> {
         _errorMessage = null;
       });
 
-      final pickedFile = await FilePicker.pickFile(
-        type: FileType.custom,
-        allowedExtensions: ['csv', 'txt'],
-      );
+      final pickedFile = await pickCsvFile();
 
       if (pickedFile == null) {
         setState(() {
@@ -66,15 +63,9 @@ class _CsvImportFlowState extends State<CsvImportFlow> {
         return;
       }
 
-      final bytes = await pickedFile.readAsBytes();
-      String content = utf8.decode(bytes, allowMalformed: true);
+      final content = pickedFile.content;
 
       if (content.trim().isNotEmpty) {
-        // Strip BOM (Byte Order Mark) if present (common in spreadsheet exports)
-        if (content.startsWith('\uFEFF')) {
-          content = content.substring(1);
-        }
-
         setState(() {
           _csvTextController.text = content;
           _selectedFileName = pickedFile.name;
@@ -101,6 +92,24 @@ class _CsvImportFlowState extends State<CsvImportFlow> {
         _isReadingFile = false;
         _errorMessage = 'Failed to read file: $e';
       });
+    }
+  }
+
+  void _loadDemoCsv() {
+    setState(() {
+      _csvTextController.text = DemoCsvData.sampleCsv;
+      _selectedFileName = DemoCsvData.sampleFileName;
+      _errorMessage = null;
+      _isReadingFile = false;
+    });
+
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Loaded sample demo transactions CSV'),
+          duration: Duration(seconds: 2),
+        ),
+      );
     }
   }
 
@@ -504,32 +513,104 @@ class _CsvImportFlowState extends State<CsvImportFlow> {
           ),
         ),
         const SizedBox(height: 14),
-        Row(
-          children: [
-            Expanded(
-              child: OutlinedButton.icon(
-                onPressed: _isReadingFile ? null : _pickCsvFileFromDevice,
-                icon: const Icon(Icons.folder_open, size: 18),
-                label: const Text(
-                  'Browse File',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final isCompact = constraints.maxWidth < 460;
+            if (isCompact) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          onPressed:
+                              _isReadingFile ? null : _pickCsvFileFromDevice,
+                          icon: const Icon(Icons.folder_open, size: 18),
+                          label: const Text(
+                            'Browse File',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          onPressed: _isReadingFile ? null : _loadDemoCsv,
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: AppTheme.accentColor,
+                            side: BorderSide(
+                              color: AppTheme.accentColor.withValues(alpha: 0.5),
+                            ),
+                          ),
+                          icon: const Icon(Icons.auto_awesome, size: 16),
+                          label: const Text(
+                            'Use Demo CSV',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  ElevatedButton.icon(
+                    onPressed: _processCsvText,
+                    icon: const Icon(Icons.arrow_forward, size: 18),
+                    label: const Text('Continue'),
+                  ),
+                ],
+              );
+            }
+
+            return Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed:
+                        _isReadingFile ? null : _pickCsvFileFromDevice,
+                    icon: const Icon(Icons.folder_open, size: 18),
+                    label: const Text(
+                      'Browse File',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: ElevatedButton.icon(
-                onPressed: _processCsvText,
-                icon: const Icon(Icons.arrow_forward, size: 18),
-                label: const Text(
-                  'Continue',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                const SizedBox(width: 8),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: _isReadingFile ? null : _loadDemoCsv,
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppTheme.accentColor,
+                      side: BorderSide(
+                        color: AppTheme.accentColor.withValues(alpha: 0.5),
+                      ),
+                    ),
+                    icon: const Icon(Icons.auto_awesome, size: 16),
+                    label: const Text(
+                      'Use Demo CSV',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-          ],
+                const SizedBox(width: 8),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: _processCsvText,
+                    icon: const Icon(Icons.arrow_forward, size: 18),
+                    label: const Text(
+                      'Continue',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
         ),
       ],
     );
@@ -1217,10 +1298,15 @@ class _CsvImportFlowState extends State<CsvImportFlow> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            label,
-            style: const TextStyle(color: AppTheme.textSecondary, fontSize: 13),
+          Expanded(
+            child: Text(
+              label,
+              style:
+                  const TextStyle(color: AppTheme.textSecondary, fontSize: 13),
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
+          const SizedBox(width: 8),
           Text(
             value,
             style: TextStyle(

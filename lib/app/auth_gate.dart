@@ -7,6 +7,8 @@ import '../shared/widgets/finora_error_view.dart';
 import '../shared/widgets/finora_loading_indicator.dart';
 import 'authenticated_app_shell.dart';
 
+import '../features/businesses/data/demo_business_service.dart';
+
 class AuthGate extends StatefulWidget {
   const AuthGate({
     super.key,
@@ -27,6 +29,12 @@ class _AuthGateState extends State<AuthGate> {
     super.initState();
     widget.authController.addListener(_onAuthChanged);
     _onAuthChanged();
+
+    final uri = Uri.base;
+    if (uri.queryParameters['demo'] == 'true' || uri.queryParameters['demo'] == '1') {
+      final demo = DemoBusinessService.getDemoData();
+      widget.businessController.loadDemoMode(demo.business);
+    }
   }
 
   @override
@@ -36,6 +44,8 @@ class _AuthGateState extends State<AuthGate> {
   }
 
   void _onAuthChanged() {
+    if (widget.businessController.isDemoMode) return;
+
     if (widget.authController.isAuthenticated) {
       if (widget.businessController.state == BusinessState.initial) {
         widget.businessController.loadUserBusiness();

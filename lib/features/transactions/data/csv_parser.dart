@@ -420,6 +420,23 @@ class CsvParser {
       if (mapping.merchantColumn.isNotEmpty) break;
     }
 
+    // 8. Payment Status Detection
+    final statusKeywords = [
+      'payment status',
+      'paymentstatus',
+      'payment_status',
+      'status',
+    ];
+    for (final kw in statusKeywords) {
+      for (int i = 0; i < lowerHeaders.length; i++) {
+        if (lowerHeaders[i] == kw || lowerHeaders[i].contains(kw)) {
+          mapping.paymentStatusColumn = headers[i];
+          break;
+        }
+      }
+      if (mapping.paymentStatusColumn.isNotEmpty) break;
+    }
+
     return mapping;
   }
 
@@ -689,8 +706,10 @@ class CsvParser {
         merchantName: (merchant != null && merchant.isNotEmpty)
             ? merchant
             : null,
-        paymentStatus:
-            PaymentStatus.paid, // Default imported transactions to paid
+        paymentStatus: _parsePaymentStatus(
+          rowMap[mapping.paymentStatusColumn],
+          defaultStatus: PaymentStatus.paid,
+        ),
         source: TransactionSource.csv,
         externalReference: (ref != null && ref.isNotEmpty) ? ref : null,
         rawText: rowList.join(','),
@@ -763,5 +782,23 @@ class CsvParser {
     }
 
     return false;
+  }
+
+  static PaymentStatus _parsePaymentStatus(
+    String? raw, {
+    PaymentStatus defaultStatus = PaymentStatus.paid,
+  }) {
+    if (raw == null || raw.trim().isEmpty) return defaultStatus;
+    final lower = raw.trim().toLowerCase();
+    if (lower == 'pending' || lower == 'unpaid') {
+      return PaymentStatus.pending;
+    }
+    if (lower == 'overdue' || lower == 'late') {
+      return PaymentStatus.overdue;
+    }
+    if (lower == 'paid' || lower == 'completed' || lower == 'cleared') {
+      return PaymentStatus.paid;
+    }
+    return defaultStatus;
   }
 }

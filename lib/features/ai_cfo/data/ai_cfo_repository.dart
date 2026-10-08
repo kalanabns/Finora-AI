@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../../core/utilities/money_formatter.dart';
 import '../../../core/utilities/uuid_generator.dart';
 import '../../alerts/domain/alert.dart';
 import '../../businesses/domain/business.dart';
@@ -272,7 +273,8 @@ class AICFORepository {
     Business? business,
   }) {
     final bName = business?.name ?? 'your business';
-    final currency = business?.currency ?? 'USD';
+    final currency = business?.currency ?? 'LKR';
+    final symbol = MoneyFormatter.getCurrencySymbol(currency);
     final lowerMsg = message.toLowerCase();
 
     // 0. Insufficient Data Check
@@ -324,7 +326,7 @@ This signal directly impacts operating liquidity and profit stability for $bName
       final canAfford = monthlyProfit > 3000 && monthlyCash > 2000;
 
       return '''### What Happened
-$bName currently generates **\$$currency ${metric.profit.toStringAsFixed(2)}** in monthly profit and **\$$currency ${metric.netCashFlow.toStringAsFixed(2)}** in net cash flow, with a composite Health Score of **${metric.healthScore?.toStringAsFixed(0) ?? "0"}/100**.
+$bName currently generates **$symbol${metric.profit.toStringAsFixed(2)}** in monthly profit and **$symbol${metric.netCashFlow.toStringAsFixed(2)}** in net cash flow, with a composite Health Score of **${metric.healthScore?.toStringAsFixed(0) ?? "0"}/100**.
 
 ### Why It Matters
 Adding new fixed payroll increases your monthly break-even threshold regardless of revenue volatility. A safe hiring decision requires at least 3-6 months of payroll reserve plus consistent positive operating cash flow.
@@ -353,7 +355,7 @@ Adding new fixed payroll increases your monthly break-even threshold regardless 
       final isPositive = cashFlow >= 0;
 
       return '''### What Happened
-Historical net operating cash flow is running at **${isPositive ? "+" : ""}\$$currency ${cashFlow.toStringAsFixed(2)}** per month. Total receivables waiting to be collected stand at **\$$currency ${metric.receivables.toStringAsFixed(2)}**.
+Historical net operating cash flow is running at **${isPositive ? "+" : ""}$symbol${cashFlow.toStringAsFixed(2)}** per month. Total receivables waiting to be collected stand at **$symbol${metric.receivables.toStringAsFixed(2)}**.
 
 ### Why It Matters
 Forward cash stability depends on maintaining positive operating cash flow and accelerating the velocity of invoice collections.
@@ -364,7 +366,7 @@ Forward cash stability depends on maintaining positive operating cash flow and a
 
 ### Recommended Actions
 1. Review your 3-Month Projection in the **Forecasts** tab to examine best/worst-case cash trajectory.
-2. Follow up on the **\$$currency ${metric.receivables.toStringAsFixed(2)}** in pending invoices to secure immediate cash inflows.
+2. Follow up on the **$symbol${metric.receivables.toStringAsFixed(2)}** in pending invoices to secure immediate cash inflows.
 3. Establish a rolling 13-week cash flow calendar to monitor weekly disbursement timing.
 
 ### Expected Impact & Urgency
@@ -383,7 +385,7 @@ Forward cash stability depends on maintaining positive operating cash flow and a
       final fivePercentGain = rev * 0.05;
 
       return '''### What Happened
-$bName recorded **\$$currency ${rev.toStringAsFixed(2)}** in baseline revenue with a profit margin of **${metric.profitMargin.toStringAsFixed(1)}%**. A 5% price adjustment would generate approximately **+\$$currency ${fivePercentGain.toStringAsFixed(2)}** in direct gross profit.
+$bName recorded **$symbol${rev.toStringAsFixed(2)}** in baseline revenue with a profit margin of **${metric.profitMargin.toStringAsFixed(1)}%**. A 5% price adjustment would generate approximately **+$symbol${fivePercentGain.toStringAsFixed(2)}** in direct gross profit.
 
 ### Why It Matters
 Because fixed operating costs remain constant, pricing power flows directly to bottom-line net profit and cash flow expansion.
@@ -411,7 +413,7 @@ Because fixed operating costs remain constant, pricing power flows directly to b
       final isNegativeCash = metric.netCashFlow < 0;
 
       return '''### What Happened
-$bName is operating with a Financial Health Score of **${metric.healthScore?.toStringAsFixed(0) ?? "0"}/100**. ${isLoss ? "Current net loss is -\$$currency ${(-metric.profit).toStringAsFixed(2)}." : "Net profit is \$$currency ${metric.profit.toStringAsFixed(2)}."} ${isNegativeCash ? "Net cash burn is -\$$currency ${(-metric.netCashFlow).toStringAsFixed(2)}." : "Operating cash flow is +\$$currency ${metric.netCashFlow.toStringAsFixed(2)}."}
+$bName is operating with a Financial Health Score of **${metric.healthScore?.toStringAsFixed(0) ?? "0"}/100**. ${isLoss ? "Current net loss is -$symbol${(-metric.profit).toStringAsFixed(2)}." : "Net profit is $symbol${metric.profit.toStringAsFixed(2)}."} ${isNegativeCash ? "Net cash burn is -$symbol${(-metric.netCashFlow).toStringAsFixed(2)}." : "Operating cash flow is +$symbol${metric.netCashFlow.toStringAsFixed(2)}."}
 
 ### Why It Matters
 ${isNegativeCash ? "Cash disbursements are outpacing collections, which will erode your liquid cash buffer if unchecked." : "Operating margins require active defense against compounding overhead and delayed receivables."}
@@ -421,7 +423,7 @@ ${isNegativeCash ? "Cash disbursements are outpacing collections, which will ero
 - Overdue customer invoices turning into bad debt write-offs.
 
 ### Recommended Actions
-1. Accelerate collection of the **\$$currency ${metric.receivables.toStringAsFixed(2)}** in outstanding customer receivables.
+1. Accelerate collection of the **$symbol${metric.receivables.toStringAsFixed(2)}** in outstanding customer receivables.
 2. Conduct an immediate audit of recurring vendor subscriptions and discretionary retainers.
 3. Delay capital-intensive disbursements until monthly cash flow is solidly positive.
 
@@ -437,7 +439,7 @@ ${isNegativeCash ? "Cash disbursements are outpacing collections, which will ero
         lowerMsg.contains('cost') ||
         lowerMsg.contains('overhead')) {
       return '''### What Happened
-Total operating expenses for this period are **\$$currency ${metric.expenses.toStringAsFixed(2)}**, with an expense growth rate of **${metric.expenseGrowth.toStringAsFixed(1)}%** vs prior period.
+Total operating expenses for this period are **$symbol${metric.expenses.toStringAsFixed(2)}**, with an expense growth rate of **${metric.expenseGrowth.toStringAsFixed(1)}%** vs prior period.
 
 ### Why It Matters
 Pruning discretionary overhead immediately widens your operating margin without demanding costly sales cycles.
@@ -463,7 +465,7 @@ Pruning discretionary overhead immediately widens your operating margin without 
         lowerMsg.contains('margin') ||
         lowerMsg.contains('profit')) {
       return '''### What Happened
-$bName generated **\$$currency ${metric.revenue.toStringAsFixed(2)}** in revenue with a profit margin of **${metric.profitMargin.toStringAsFixed(1)}%**.
+$bName generated **$symbol${metric.revenue.toStringAsFixed(2)}** in revenue with a profit margin of **${metric.profitMargin.toStringAsFixed(1)}%**.
 
 ### Why It Matters
 Focusing on high-margin offerings while accelerating invoice payment terms compounds your cash conversion velocity.
@@ -483,7 +485,7 @@ Focusing on high-margin offerings while accelerating invoice payment terms compo
 
     // 8. General Performance & Default Executive Brief
     return '''### What Happened
-$bName recorded **\$$currency ${metric.revenue.toStringAsFixed(2)}** in revenue and **\$$currency ${metric.expenses.toStringAsFixed(2)}** in expenses, delivering a net profit of **\$$currency ${metric.profit.toStringAsFixed(2)}** (Margin: **${metric.profitMargin.toStringAsFixed(1)}%**). Your composite Financial Health Score is **${metric.healthScore?.toStringAsFixed(0) ?? "0"}/100**.
+$bName recorded **$symbol${metric.revenue.toStringAsFixed(2)}** in revenue and **$symbol${metric.expenses.toStringAsFixed(2)}** in expenses, delivering a net profit of **$symbol${metric.profit.toStringAsFixed(2)}** (Margin: **${metric.profitMargin.toStringAsFixed(1)}%**). Your composite Financial Health Score is **${metric.healthScore?.toStringAsFixed(0) ?? "0"}/100**.
 
 ### Why It Matters
 ${metric.profit >= 0 ? "Core operations are profitable, providing stability to support reinvestment." : "Operating expenses exceed current revenue, creating pressure on working capital."}

@@ -54,6 +54,8 @@ class _AICFOScreenState extends State<AICFOScreen> {
       if (widget.initialAlertToExplain != null && !_hasSentInitialAlert) {
         _hasSentInitialAlert = true;
         _sendAlertExplanation(widget.initialAlertToExplain!);
+      } else if (widget.controller.messages.isEmpty) {
+        _handleSend('What happens if I increase prices by 5%?');
       }
     });
   }

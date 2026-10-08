@@ -1,0 +1,49 @@
+Date,Description,Category,Amount,Type,PaymentStatus,Merchant,Reference
+2026-07-02,Enterprise Software Retainer - Dilmah Tea,Sales Revenue,850000.00,income,paid,Dilmah Ceylon Tea,INV-2026-0701
+2026-07-03,Colombo 03 Office Space Monthly Lease,Rent,220000.00,expense,paid,Prime Lands Realty,LSE-2026-07
+2026-07-05,Commercial High-Speed Fiber Internet & VPN,Utilities,24500.00,expense,paid,SLT Mobitel,BILL-SLT-7892
+2026-07-07,Ceylon Electricity Board Commercial Power,Utilities,68400.00,expense,paid,Ceylon Electricity Board,CEB-2026-07A
+2026-07-10,Wholesale Hardware & Server Restock,Inventory,480000.00,expense,paid,Singer Industrial,PO-2026-102
+2026-07-12,Web Application Development Milestone 1 - MAS,Service Revenue,1250000.00,income,paid,MAS Active,INV-2026-0702
+2026-07-15,Mid-Month Engineering Team Payroll,Payroll,650000.00,expense,paid,Commercial Bank Payroll,SAL-2026-07A
+2026-07-18,Digital Marketing & Social Ads Campaign,Marketing,85000.00,expense,paid,Meta Platforms,AD-2026-07
+2026-07-20,Audit & Corporate Compliance Retainer,Professional Services,75000.00,expense,paid,KPMG Sri Lanka,SRV-2026-041
+2026-07-22,Courier & Nationwide Delivery Services,Transportation,32500.00,expense,paid,Pronto Lanka Courier,EXP-2026-089
+2026-07-25,Commercial Fire & Asset Insurance,Insurance,45000.00,expense,paid,Sri Lanka Insurance,POL-SLIC-9901
+2026-07-28,Cloud Infrastructure & Database Hosting,Software,58000.00,expense,paid,Amazon Web Services,AWS-2026-07
+2026-07-30,End-of-Month Staff Payroll & EPF/ETF,Payroll,650000.00,expense,paid,Commercial Bank Payroll,SAL-2026-07B
+2026-08-01,Annual ERP Maintenance Contract - Brandix,Sales Revenue,950000.00,income,paid,Brandix Lanka,INV-2026-0801
+2026-08-03,Colombo 03 Office Space Monthly Lease,Rent,220000.00,expense,paid,Prime Lands Realty,LSE-2026-08
+2026-08-04,Commercial High-Speed Fiber Internet & VPN,Utilities,24500.00,expense,paid,SLT Mobitel,BILL-SLT-8012
+2026-08-06,Ceylon Electricity Board Commercial Power,Utilities,72100.00,expense,paid,Ceylon Electricity Board,CEB-2026-08A
+2026-08-08,POS & Networking Hardware Batch Restock,Inventory,520000.00,expense,paid,Singer Industrial,PO-2026-109
+2026-08-11,E-Commerce Platform Deployment - ODEL,Service Revenue,1100000.00,income,paid,ODEL PLC,INV-2026-0802
+2026-08-14,Google Workspace & Enterprise SaaS Licenses,Software,42000.00,expense,paid,Google Cloud,SaaS-2026-08
+2026-08-15,Mid-Month Engineering Team Payroll,Payroll,680000.00,expense,paid,Commercial Bank Payroll,SAL-2026-08A
+2026-08-18,Search Engine Ads & Colombo Campaign,Marketing,92000.00,expense,paid,Google Ads,AD-2026-08
+2026-08-20,HNB SME Business Loan Monthly Installment,Loan Payment,115000.00,expense,paid,Hatton National Bank,LOAN-HNB-552
+2026-08-23,Office Stationery & Pantry Supplies,Supplies,28500.00,expense,paid,Keells Super,REC-2026-339
+2026-08-25,Corporate Fleet Van Fuel & Maintenance,Transportation,41000.00,expense,paid,Ceypetco Fuel,EXP-2026-112
+2026-08-28,Cloud Storage & AI API Services,Software,65000.00,expense,paid,Amazon Web Services,AWS-2026-08
+2026-08-30,End-of-Month Staff Payroll & EPF/ETF,Payroll,680000.00,expense,paid,Commercial Bank Payroll,SAL-2026-08B
+2026-09-02,Quarterly Support & SLA Retainer - Hayleys,Sales Revenue,1050000.00,income,paid,Hayleys Group,INV-2026-0901
+2026-09-03,Colombo 03 Office Space Monthly Lease,Rent,220000.00,expense,paid,Prime Lands Realty,LSE-2026-09
+2026-09-05,Commercial High-Speed Fiber Internet & VPN,Utilities,24500.00,expense,paid,SLT Mobitel,BILL-SLT-8221
+2026-09-07,Ceylon Electricity Board Commercial Power,Utilities,69800.00,expense,paid,Ceylon Electricity Board,CEB-2026-09A
+2026-09-09,Custom Mobile App Delivery Phase 2 - John Keells,Service Revenue,1450000.00,income,paid,John Keells Holdings,INV-2026-0902
+2026-09-12,Inventory Components & Cables Restock,Inventory,390000.00,expense,paid,Abans Distribution,PO-2026-115
+2026-09-15,Mid-Month Engineering Team Payroll,Payroll,700000.00,expense,paid,Commercial Bank Payroll,SAL-2026-09A
+2026-09-18,Digital Media Sponsorship & PR Campaign,Marketing,110000.00,expense,paid,Daily FT Advertising,AD-2026-09
+2026-09-20,HNB SME Business Loan Monthly Installment,Loan Payment,115000.00,expense,paid,Hatton National Bank,LOAN-HNB-553
+2026-09-22,Corporate Legal Advisory Services,Professional Services,80000.00,expense,paid,Julius & Creasy,SRV-2026-052
+2026-09-25,Nationwide Document & Equipment Courier,Transportation,36000.00,expense,paid,Koombiyo Delivery,EXP-2026-144
+2026-09-28,Cloud Computing & Security Hosting,Software,68000.00,expense,paid,Amazon Web Services,AWS-2026-09
+2026-09-30,End-of-Month Staff Payroll & EPF/ETF,Payroll,700000.00,expense,paid,Commercial Bank Payroll,SAL-2026-09B
+2026-10-01,Enterprise Solution Licensing - Lion Brewery,Sales Revenue,1350000.00,income,paid,Lion Brewery Ceylon,INV-2026-1001
+2026-10-02,Colombo 03 Office Space Monthly Lease,Rent,220000.00,expense,paid,Prime Lands Realty,LSE-2026-10
+2026-10-03,Commercial High-Speed Fiber Internet & VPN,Utilities,24500.00,expense,paid,SLT Mobitel,BILL-SLT-8445
+2026-10-04,Ceylon Electricity Board Commercial Power,Utilities,74200.00,expense,paid,Ceylon Electricity Board,CEB-2026-10A
+2026-10-05,Fintech Integration Milestone - Dialog Axiata,Service Revenue,980000.00,income,pending,Dialog Axiata PLC,INV-2026-1002
+2026-10-06,Q4 Hardware Restock Order,Inventory,580000.00,expense,pending,Singer Industrial,PO-2026-121
+2026-10-07,Quarterly Support Agreement - Sunshine Holdings,Sales Revenue,750000.00,income,overdue,Sunshine Holdings,INV-2026-0915
+2026-10-08,Consulting Invoice - Hemas Pharmaceuticals,Service Revenue,620000.00,income,pending,Hemas Holdings,INV-2026-1003

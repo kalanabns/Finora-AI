@@ -81,11 +81,15 @@ class _AuthenticatedAppShellState extends State<AuthenticatedAppShell> {
       },
     );
 
-    final business = widget.businessController.currentBusiness;
-    if (business != null) {
-      if (widget.businessController.isDemoMode) {
-        _loadDemoState();
-      } else {
+    var business = widget.businessController.currentBusiness;
+    if (business == null) {
+      final demo = DemoBusinessService.getDemoData();
+      widget.businessController.loadDemoMode(demo.business);
+      business = demo.business;
+    }
+    if (widget.businessController.isDemoMode) {
+      _loadDemoState();
+    } else {
         _transactionController.loadTransactions(businessId: business.id).then((
           _,
         ) {
@@ -95,7 +99,26 @@ class _AuthenticatedAppShellState extends State<AuthenticatedAppShell> {
         _actionPlanController.loadActionItems(business.id);
         _aiCfoController.loadHistory(businessId: business.id);
       }
+
+    final uri = Uri.base;
+    if (uri.queryParameters['tab'] != null) {
+      _selectedIndex = int.tryParse(uri.queryParameters['tab']!) ?? 0;
     }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final screen = uri.queryParameters['screen'];
+      if (screen == 'simulations') {
+        _openSimulationsScreen(
+          context,
+          initialPercentageDelta: 5.0,
+          initialScenarioName: '5% Price Increase',
+        );
+      } else if (screen == 'forecasts') {
+        _openForecastsScreen(context);
+      } else if (screen == 'analytics') {
+        _openAnalyticsScreen(context);
+      }
+    });
   }
 
   void _loadDemoState() {

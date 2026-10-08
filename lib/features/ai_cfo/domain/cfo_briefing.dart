@@ -1,3 +1,4 @@
+import '../../../core/utilities/money_formatter.dart';
 import '../../businesses/domain/business.dart';
 import '../../financial_health/domain/financial_metric.dart';
 import '../../forecasts/domain/forecast.dart';
@@ -32,6 +33,7 @@ class CfoBriefing {
     List<Forecast>? forecasts,
   }) {
     final currency = business.currency;
+    final symbol = MoneyFormatter.getCurrencySymbol(currency);
     final issues = PriorityRankingEngine.rankFinancialIssues(
       business: business,
       metric: metric,
@@ -62,11 +64,11 @@ class CfoBriefing {
     // 1. Today Status
     String status;
     if (profit >= 0 && cashFlow >= 0) {
-      status = '${business.name} is in solid financial standing (Score: $health/100). Both net profit ($currency ${profit.toStringAsFixed(2)}, $margin%) and operating cash flow are positive.';
+      status = '${business.name} is in solid financial standing (Score: $health/100). Both net profit ($symbol${profit.toStringAsFixed(2)}, $margin%) and operating cash flow are positive.';
     } else if (profit >= 0 && cashFlow < 0) {
-      status = '${business.name} is profitable on paper ($currency ${profit.toStringAsFixed(2)}), but operating cash flow is tightening (-$currency ${(-cashFlow).toStringAsFixed(2)}).';
+      status = '${business.name} is profitable on paper ($symbol${profit.toStringAsFixed(2)}), but operating cash flow is tightening (-$symbol${(-cashFlow).toStringAsFixed(2)}).';
     } else {
-      status = '${business.name} is currently operating at a net deficit of -$currency ${(-profit).toStringAsFixed(2)} with a Health Score of $health/100.';
+      status = '${business.name} is currently operating at a net deficit of -$symbol${(-profit).toStringAsFixed(2)} with a Health Score of $health/100.';
     }
 
     // 2. Most Important Change
@@ -79,7 +81,7 @@ class CfoBriefing {
       } else if (revGrowth < -10.0) {
         change = 'Revenue contracted by ${(-revGrowth).toStringAsFixed(1)}% vs the prior period.';
       } else {
-        change = 'Operating margins shifted to $margin% on $currency ${metric.revenue.toStringAsFixed(2)} revenue.';
+        change = 'Operating margins shifted to $margin% on $symbol${metric.revenue.toStringAsFixed(2)} revenue.';
       }
     } else {
       change = 'Baseline financial metrics established for the current period.';
@@ -91,9 +93,9 @@ class CfoBriefing {
     if (topRiskAlert.isNotEmpty) {
       risk = topRiskAlert.first.title;
     } else if (cashFlow < 0) {
-      risk = 'Negative cash burn of -$currency ${(-cashFlow).toStringAsFixed(2)} drawing down liquidity reserves.';
+      risk = 'Negative cash burn of -$symbol${(-cashFlow).toStringAsFixed(2)} drawing down liquidity reserves.';
     } else if (metric.receivables > 0) {
-      risk = '$currency ${metric.receivables.toStringAsFixed(2)} uncollected in customer accounts receivable.';
+      risk = '$symbol${metric.receivables.toStringAsFixed(2)} uncollected in customer accounts receivable.';
     } else {
       risk = 'No severe risks detected. Operating risk profile remains low.';
     }
@@ -104,7 +106,7 @@ class CfoBriefing {
     if (topOppAlert.isNotEmpty) {
       opp = topOppAlert.first.title;
     } else if (metric.receivables > 0) {
-      opp = 'Accelerate invoice recovery to inject up to $currency ${metric.receivables.toStringAsFixed(2)} in direct cash.';
+      opp = 'Accelerate invoice recovery to inject up to $symbol${metric.receivables.toStringAsFixed(2)} in direct cash.';
     } else {
       opp = 'Optimize operating vendor contracts to expand gross margins.';
     }
@@ -125,7 +127,7 @@ class CfoBriefing {
       final revForecasts = forecasts.where((f) => f.forecastType == ForecastType.revenue).toList();
       if (revForecasts.isNotEmpty) {
         final nextRev = revForecasts.first.predictedValue;
-        forecastText = 'Projecting next month revenue of ~$currency ${nextRev.toStringAsFixed(0)} based on historical weighted trend.';
+        forecastText = 'Projecting next month revenue of ~$symbol${nextRev.toStringAsFixed(0)} based on historical weighted trend.';
       } else {
         forecastText = 'Forecast model updated with current trajectory assumptions.';
       }

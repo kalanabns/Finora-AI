@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'app/auth_gate.dart';
+import 'app/authenticated_app_shell.dart';
 import 'core/config/supabase_config.dart';
 import 'core/theme/app_theme.dart';
 import 'features/authentication/application/auth_controller.dart';
 import 'features/businesses/application/business_controller.dart';
+import 'features/businesses/data/demo_business_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -43,6 +45,8 @@ class _FinoraAppState extends State<FinoraApp> {
     if (widget.initError == null) {
       _authController = AuthController();
       _businessController = BusinessController();
+      final demo = DemoBusinessService.getDemoData();
+      _businessController.loadDemoMode(demo.business);
     }
   }
 
@@ -65,7 +69,7 @@ class _FinoraAppState extends State<FinoraApp> {
       themeMode: ThemeMode.light,
       home: widget.initError != null
           ? _buildInitErrorScreen(widget.initError!)
-          : AuthGate(
+          : AuthenticatedAppShell(
               authController: _authController,
               businessController: _businessController,
             ),
